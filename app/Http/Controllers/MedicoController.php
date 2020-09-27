@@ -43,7 +43,7 @@ class MedicoController extends Controller
         $numero_conselho = $request->input('numero_conselho');
 
         //cadastrar novo usuario
-        if(!$id_usuario){
+        if (!$id_usuario) {
             $sql = "INSERT INTO 
                     usuarios ( nome_completo, login, password, email, id_cargo )
                 VALUES
@@ -68,7 +68,7 @@ class MedicoController extends Controller
         $user = DB::selectOne($sqlInfoUser);
 
         //cadastrar novo conselho
-        if(!$id_conselho){
+        if (!$id_conselho) {
             $sql = "INSERT INTO 
                     conselho ( conselho )
                 VALUES
@@ -81,13 +81,13 @@ class MedicoController extends Controller
         $sqlMedic = "INSERT INTO 
                         medico ( id_usuario )
                     VALUES";
-        switch($id_usuario){
+        switch ($id_usuario) {
             case !null:
                 $this->$sqlMedic = $sqlMedic .  " ( $id_usuario )";
-            break;
+                break;
             case null:
                 $this->$sqlMedic = $sqlMedic . " ( $user->id )";
-            break;
+                break;
         }
 
         DB::insert($this->$sqlMedic);
@@ -99,13 +99,13 @@ class MedicoController extends Controller
                         medico 
                     WHERE
                         id_usuario =";
-        switch($id_usuario){
+        switch ($id_usuario) {
             case !null:
                 $this->$sqlInfo = $sqlInfo . "$id_usuario";
-            break;
+                break;
             case null:
                 $this->$sqlInfo = $sqlInfo . "$user->id";
-            break;
+                break;
         }
 
         $medic = DB::selectOne($this->$sqlInfo);
@@ -125,17 +125,36 @@ class MedicoController extends Controller
         $sqlConMedic = "INSERT INTO 
                             medico_conselho ( id_medico, id_conselho, numero_conselho )
                         VALUES";
-        switch($id_conselho){
+        switch ($id_conselho) {
             case !null:
                 $this->$sqlConMedic = $sqlConMedic . "( $medic->id, $id_conselho, $numero_conselho )";
-            break;
+                break;
             case null:
                 $this->$sqlConMedic = $sqlConMedic . "( $medic->id, $conselhoInfo->id, $numero_conselho )";
-            break;
+                break;
         }
 
         DB::insert($this->$sqlConMedic);
 
         return response()->json(['message' => 'Medico cadastrado com sucesso!'], 200);
+    }
+
+    public function index()
+    {
+        $sql = "SELECT
+                    m.id AS id_medico,
+                    u.nome_completo,
+                    u.email,
+                    u.login,
+                    c.conselho 
+                FROM
+                    medico AS m
+                    INNER JOIN usuarios AS u ON u.id = m.id_usuario
+                    INNER JOIN medico_conselho mc ON mc.id_medico = m.id
+                    INNER JOIN conselho c ON c.id = mc.id_conselho";
+
+        $medicos = DB::select($sql);
+
+        return response()->json($medicos, 200);
     }
 }
