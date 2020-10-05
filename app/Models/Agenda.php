@@ -10,6 +10,6 @@ class Agenda extends Model
     use HasFactory;
     
     protected $fillable = [
-        'tempo_consulta'
+        'tempo_consulta', 'id_medico'
     ];
 }
