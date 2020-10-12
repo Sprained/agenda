@@ -18,4 +18,6 @@ Route::group(['middleware' => ['jwtAdministrador']], function(){
     Route::post('paciente', 'App\Http\Controllers\PacienteController@insert');
 
     Route::post('agenda', 'App\Http\Controllers\AgendaController@insert');
+
+    Route::post('agendamento/{id_medico}', 'App\Http\Controllers\AgendamentoController@insert');
 });

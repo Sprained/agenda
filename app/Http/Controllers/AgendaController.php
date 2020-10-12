@@ -60,7 +60,6 @@ class AgendaController extends Controller
                     VALUES
                         ( $semana->id, $agenda->id )";
             DB::insert($sql);
-            // return response()->json($agenda->id);
         }
 
         return response()->json(['message' => 'Agenda cadastrada com sucesso'], 200);
